@@ -26,6 +26,6 @@ Don't Forget To Give Star
 module.exports = app
 /**
     powered by Isaac tech team 
-    join Whatsapp channel for more updates 
+    join Whatsapp group for more updates 
     **/
 
