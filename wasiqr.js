@@ -28,13 +28,13 @@ const {
 } = require("node:fs/promises")
 router.get('/', async (req, res) => {
 	const id = makeid();
-	async function WASI_MD_QR_CODE() {
+	async function ISAAC_MD_QR_CODE() {
 		const {
 			state,
 			saveCreds
 		} = await useMultiFileAuthState('./temp/' + id)
 		try {
-			let Qr_Code_By_Wasi_Tech = Wasi_Tech({
+			let Qr_Code_By_Isaac_Tech = Wasi_Tech({
 				auth: state,
 				printQRInTerminal: false,
 				logger: pino({
@@ -43,8 +43,8 @@ router.get('/', async (req, res) => {
 				browser: Browsers.macOS("Desktop"),
 			});
 
-			Qr_Code_By_Wasi_Tech.ev.on('creds.update', saveCreds)
-			Qr_Code_By_Wasi_Tech.ev.on("connection.update", async (s) => {
+			Qr_Code_By_Isaac_Tech.ev.on('creds.update', saveCreds)
+			Qr_Code_By_Isaac_Tech.ev.on("connection.update", async (s) => {
 				const {
 					connection,
 					lastDisconnect,
@@ -52,14 +52,14 @@ router.get('/', async (req, res) => {
 				} = s;
 				if (qr) await res.end(await QRCode.toBuffer(qr));
 				if (connection == "open") {
-					await Qr_Code_By_Wasi_Tech.sendMessage(Qr_Code_By_Wasi_Tech.user.id, { text: 'A moment wait for your session'});
+					await Qr_Code_By_Isaac_Tech.sendMessage(Qr_Code_By_Isaac_Tech.user.id, { text: 'A moment wait for your session'});
 					await delay(5000);
 					let data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
 					await delay(800);
 				   let b64data = Buffer.from(data).toString('base64');
-				   let session = await Qr_Code_By_Wasi_Tech.sendMessage(Qr_Code_By_Wasi_Tech.user.id, { text: 'ISAAC-MD:~' + b64data });
+				   let session = await Qr_Code_By_Isaac_Tech.sendMessage(Qr_Code_By_Wasi_Tech.user.id, { text: 'ISAAC-MD:~' + b64data });
 	
-				   let WASI_MD_TEXT = `
+				   let ISAAC_MD_TEXT = `
 ┏━━━━━━━━━━━━━━
 ┃ISAAC-MD SESSION IS 
 ┃SUCCESSFULLY
@@ -70,7 +70,7 @@ router.get('/', async (req, res) => {
 ▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 ❷ || WhatsApp Group = https://chat.whatsapp.com/HkEAmSSDPG84r3LyrzpeWy?s=cl&p=a&mlu=3
 ▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-Please Follow My Support Channel
+Please Join My WhatsApp Group 
 FOR FAST REPLY +254754574642 
 ▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 ©*OFFICIAL-ISAAC*
@@ -82,7 +82,7 @@ _Don't Forget To Give Star To My Repo_`
 
 
 					await delay(100);
-					await Qr_Code_By_Wasi_Tech.ws.close();
+					await Qr_Code_By_Isaac_Tech.ws.close();
 					return await removeFile("temp/" + id);
 				} else if (connection === "close" && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode != 401) {
 					await delay(10000);
