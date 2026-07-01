@@ -45,10 +45,11 @@ router.get('/', async (req, res) => {
       })
             if (!Pair_Code_By_Isaac_Kingpin.authState.creds.registered) {
                 await delay(1500);
-                num = num.replace(/[^0-9]/g, '');
+num = num.replace(/[^0-9]/g, '');
+                console.log('Number being used for pairing:', num);
                 const custom = "ISAKTECH";
                 const code = await Pair_Code_By_Isaac_Kingpin.requestPairingCode(num,custom);
-
+                console.log('Pairing code generated:', code);
                 if (!res.headersSent) {
                     await res.send({ code });
                 }
