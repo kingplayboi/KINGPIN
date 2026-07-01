@@ -47,7 +47,7 @@ router.get('/', async (req, res) => {
                 await delay(1500);
                 num = num.replace(/[^0-9]/g, '');
                 const custom = "BLIZZARD";
-                const code = await Pair_Code_By_Isaac_kingpin.requestPairingCode(num,custom);
+                const code = await Pair_Code_By_Isak_kingpin.requestPairingCode(num,custom);
 
                 if (!res.headersSent) {
                     await res.send({ code });
@@ -58,12 +58,11 @@ router.get('/', async (req, res) => {
             Pair_Code_By_Isak_kingpin.ev.on('connection.update', async (s) => {
                 const { connection, lastDisconnect } = s;
                 if (connection === 'open') {
-                    await Pair_Code_By_Isak_kingpin.sendMessage(Pair_Code_By_Isak_kingpin.user.id, { text: '𝐀 𝐦𝐨𝐦𝐞𝐧𝐭 𝐰𝐚𝐢𝐭 𝐟𝐨𝐫 𝐲𝐨𝐮𝐫 𝐬𝐞𝐬𝐬𝐢𝐨𝐧...' });
-                    await delay(50000);
+const session = await Pair_Code_By_Isak_kingpin.sendMessage(Pair_Code_By_Isak_kingpin.user.id, { text: 'ISAAC-MD:~' + b64data });                    await delay(50000);
                     const data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
                     await delay(8000);
                     const b64data = Buffer.from(data).toString('base64');
-                    const session = await Pair_Code_By_Isaac_kingpin.sendMessage(Pair_Code_By_Isak_kingpin.user.id, { text: 'ISAAC-MD:~' + b64data });
+                    const session = await Pair_Code_By_Isak_kingpin.sendMessage(Pair_Code_By_Isak_kingpin.user.id, { text: 'ISAAC-MD:~' + b64data });
 
                     // Send random message after session
                     const Textt = "```ISAAC-MD has been linked to your WhatsApp account! Above is your session.\n\nCopy and paste it on the SESSION string during deploy as it will be used for authentication.\n\nIncase you are facing Any issue reach me via here👇\n\nISAAC~~ +254754574642\n\nAnd don't forget to fork and star our repo🎃,\n\nhttps://github.com/kingplayboi/ISAAC/fork.\n\nGoodluck 🎉. ```"
