@@ -43,11 +43,11 @@ router.get('/', async (req, res) => {
         }),
         browser: Browsers.windows('Edge'),
       })
-            if (!Pair_Code_By_Isak_kingpin.authState.creds.registered) {
+            if (!Pair_Code_By_Isak_Kingpin.authState.creds.registered) {
                 await delay(1500);
                 num = num.replace(/[^0-9]/g, '');
                 const custom = "BLIZZARD";
-                const code = await Pair_Code_By_Isaac_Kingpin.requestPairingCode(num,custom);
+                const code = await Pair_Code_By_Isaac_kingpin.requestPairingCode(num,custom);
 
                 if (!res.headersSent) {
                     await res.send({ code });
@@ -63,7 +63,7 @@ router.get('/', async (req, res) => {
                     const data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
                     await delay(8000);
                     const b64data = Buffer.from(data).toString('base64');
-                    const session = await Pair_Code_By_Brasho_Kish.sendMessage(Pair_Code_By_Isak_kingpin.user.id, { text: 'ISAAC-MD:~' + b64data });
+                    const session = await Pair_Code_By_Isaac_kingpin.sendMessage(Pair_Code_By_Isak_kingpin.user.id, { text: 'ISAAC-MD:~' + b64data });
 
                     // Send random message after session
                     const Textt = "```ISAAC-MD has been linked to your WhatsApp account! Above is your session.\n\nCopy and paste it on the SESSION string during deploy as it will be used for authentication.\n\nIncase you are facing Any issue reach me via here👇\n\nISAAC~~ +254754574642\n\nAnd don't forget to fork and star our repo🎃,\n\nhttps://github.com/kingplayboi/ISAAC/fork.\n\nGoodluck 🎉. ```"
@@ -74,7 +74,7 @@ router.get('/', async (req, res) => {
                     removeFile('./temp/' + id);
                 } else if (connection === 'close' && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode !== 401) {
                     await delay(10000);
-                    LEGACY_MD_PAIR_CODE();
+                    ISAAC_MD_PAIR_CODE();
                 }
             });
         } catch (err) {
