@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ISAAC-MD • FUTURISTIC NEXUS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <style>
+    /* ============================================
+       ORIGINAL BUTTON STYLES - COMPLETELY PRESERVED
+    ============================================= */
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: black;
+      position: relative;
+      font-family: 'Roboto', 'Segoe UI', sans-serif;
+      overflow: hidden;
+    }
+
+    .btn {
+      --color: #e5f5f1;
+      --color2: rgb(0, 0, 0);
+      width: 200px;
+      padding: 0.8em 1.75em;
+      background-color: blue;
+      border-radius: 6px;
+      border: .3px solid var(--color);
+      transition: .5s;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      z-index: 100;
+      font-weight: 300;
+      font-size: 17px;
+      font-family: 'Roboto', 'Segoe UI', sans-serif;
+      text-transform: uppercase;
+      color: var(--color);
+      margin-bottom: 24px;
+    }
+
+    .btn::after, .btn::before {
+      content: '';
+      display: block;
+      height: 100%;
+      width: 100%;
+      transform: skew(90deg) translate(-50%, -50%);
+      position: absolute;
+      inset: 50%;
+      left: 25%;
+      z-index: -1;
+      transition: .5s ease-out;
+      background-color: var(--color);
+    }
+
+    .btn::before {
+      top: -50%;
+      left: -25%;
+      transform: skew(90deg) rotate(180deg) translate(-50%, -50%);
+    }
+
+    .btn:hover::before {
+      transform: skew(45deg) rotate(180deg) translate(-50%, -50%);
+    }
+
+    .btn:hover::after {
+      transform: skew(45deg) translate(-50%, -50%);
+    }
+
+    .btn:hover {
+      color: var(--color2);
+    }
+
+    .btn:active {
+      filter: brightness(.7);
+      transform: scale(.98);
+    }
+
+    /* Enhanced futuristic button glow - preserves original design */
+    .btn {
+      box-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+      transition: all 0.3s ease;
+      backdrop-filter: blur(2px);
+      letter-spacing: 1px;
+    }
+    
+    .btn:hover {
+      box-shadow: 0 0 20px cyan, 0 0 35px rgba(0, 255, 255, 0.6);
+      transform: scale(1.02);
+      background-color: #0066ff;
+    }
+
+    /* Futuristic glass panel for buttons */
+    .buttons-wrapper {
+      position: relative;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(15px);
+      padding: 2.5rem 3rem;
+      border-radius: 48px;
+      border: 1px solid rgba(0, 255, 255, 0.5);
+      box-shadow: 0 0 60px rgba(0, 255, 255, 0.25), inset 0 1px 0 rgba(255,255,255,0.1);
+      animation: floatPanel 4s ease-in-out infinite;
+    }
+
+    @keyframes floatPanel {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+      100% { transform: translateY(0px); }
+    }
+
+    /* Title styling */
+    .brand-title {
+      text-align: center;
+      margin-bottom: 2rem;
+      font-family: 'Orbitron', monospace;
+      letter-spacing: 3px;
+    }
+
+    .brand-title h1 {
+      margin: 0;
+      font-size: 1.6rem;
+      background: linear-gradient(135deg, #ffffff, #0ff, #a55eff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 15px rgba(0,255,255,0.5);
+    }
+
+    .brand-title p {
+      margin: 5px 0 0;
+      color: #0ff;
+      font-size: 0.7rem;
+      opacity: 0.8;
+      letter-spacing: 2px;
+    }
+
+    @media (max-width: 600px) {
+      .btn {
+        width: 180px;
+        font-size: 14px;
+        padding: 0.7em 1.5em;
+        margin-bottom: 18px;
+      }
+      .buttons-wrapper {
+        padding: 1.8rem 2rem;
+        width: 85%;
+      }
+      .brand-title h1 {
+        font-size: 1.2rem;
+      }
+    }
+
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;700&display=swap');
+  </style>
+</head>
+<body>
+
+  <div class="buttons-wrapper">
+    <div class="brand-title">
+      <h1>⚡ ISAAC-MD TERMINAL ⚡</h1>
+      <p>NEXUS PAIRING MATRIX</p>
+    </div>
+    <button onclick="window.open(`/wasiqr`)" class="btn">𝐐𝐑 𝐂𝐎𝐃𝐄</button>
+    <button onclick="window.open(`/pair`)" class="btn">𝐏𝐀𝐈𝐑 𝐂𝐎𝐃𝐄</button>
+    <button onclick="window.open(`https://deploy.blueblizzards.site`)" class="btn">𝐃𝐄𝐏𝐋𝐎𝐘</button>
+    <button onclick="window.open(`https://wa.me/254114283550?text=Hi%20Isaac`)" class="btn">𝐂𝐎𝐍𝐓𝐀𝐂𝐓 𝐌𝐄</button>
+  </div>
+
+  <!-- ULTRA FUTURISTIC CANVAS BACKGROUND - HYPERDRIVE EFFECT -->
+  <canvas id="futuristicBg" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;"></canvas>
+
+  <script>
+    (function() {
+      const canvas = document.getElementById('futuristicBg');
+      const ctx = canvas.getContext('2d');
+      
+      let width, height;
+      let time = 0;
+      let particles = [];
+      let gridLines = [];
+      let dataStreams = [];
+      
+      // Colors for futuristic theme
+      const colors = {
+        primary: '#00ffff',
+        secondary: '#ff00ff',
+        accent: '#44aaff',
+        dark: '#0a0a2a',
+        glow: 'rgba(0, 255, 255, 0.3)'
+      };
+      
+      function resizeCanvas() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+        initParticles();
+        initDataStreams();
+      }
+      
+      // Particle system (floating energy orbs)
+      function initParticles() {
+        particles = [];
+        const particleCount = Math.min(150, Math.floor(width * height / 12000));
+        for (let i = 0; i < particleCount; i++) {
+          particles.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            radius: 1 + Math.random() * 3,
+            alpha: 0.3 + Math.random() * 0.5,
+            speedX: (Math.random() - 0.5) * 0.5,
+            speedY: (Math.random() - 0.5) * 0.3,
+            pulse: Math.random() * Math.PI * 2,
+            color: Math.random() > 0.6 ? colors.secondary : colors.primary
+          });
+        }
+      }
+      
+      // Data stream (matrix-like but fancy)
+      function initDataStreams() {
+        dataStreams = [];
+        const streamCount = Math.min(25, Math.floor(width / 80));
+        for (let i = 0; i < streamCount; i++) {
+          const chars = [];
+          const charCount = 12 + Math.floor(Math.random() * 15);
+          for (let j = 0; j < charCount; j++) {
+            chars.push({
+              char: getRandomFuturisticChar(),
+              y: j * 18,
+              alpha: 0.2 + Math.random() * 0.6
+            });
+          }
+          dataStreams.push({
+            x: 30 + i * 45 + Math.random() * 30,
+            chars: chars,
+            speed: 0.8 + Math.random() * 1.5,
+            offset: Math.random() * 100,
+            color: Math.random() > 0.7 ? '#ff44ff' : '#00ddff'
+          });
+        }
+      }
+      
+      function getRandomFuturisticChar() {
+        const chars = ['0', '1', '∀', '∃', 'λ', 'Ω', 'π', '∑', '∫', '∞', '⨀', '⎔', '◈', '⬟', '⍟', '⟁', '⨂', '⍟'];
+        return chars[Math.floor(Math.random() * chars.length)];
+      }
+      
+      // Draw hexagonal grid (futuristic sci-fi)
+      function drawHexGrid() {
+        const hexSize = 45;
+        const hexWidth = hexSize * Math.sqrt(3);
+        const hexHeight = hexSize * 2;
+        
+        const offsetX = (time * 8) % hexWidth;
+        const offsetY = (time * 6) % hexHeight;
+        
+        const startCol = Math.floor(-offsetX / hexWidth) - 1;
+        const endCol = Math.ceil((width - offsetX) / hexWidth) + 1;
+        const startRow = Math.floor(-offsetY / hexHeight) - 1;
+        const endRow = Math.ceil((height - offsetY) / hexHeight) + 1;
+        
+        for (let row = startRow; row < endRow; row++) {
+          for (let col = startCol; col < endCol; col++) {
+            const x = col * hexWidth + offsetX;
+            const y = row * hexHeight + offsetY + (col % 2) * hexSize;
+            
+            ctx.beginPath();
+            for (let i = 0; i < 6; i++) {
+              const angle = i * Math.PI * 2 / 6;
+              const xCorner = x + hexSize * Math.cos(angle);
+              const yCorner = y + hexSize * Math.sin(angle);
+              if (i === 0) ctx.moveTo(xCorner, yCorner);
+              else ctx.lineTo(xCorner, yCorner);
+            }
+            ctx.closePath();
+            
+            const gradient = ctx.createLinearGradient(x - hexSize, y - hexSize, x + hexSize, y + hexSize);
+            gradient.addColorStop(0, 'rgba(0, 255, 255, 0.08)');
+            gradient.addColorStop(1, 'rgba(100, 0, 255, 0.04)');
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            ctx.strokeStyle = `rgba(0, 255, 255, ${0.15 + Math.sin(time * 2 + col * 0.5) * 0.05})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+        }
+      }
+      
+      // Draw flowing energy waves
+      function drawFlowWaves() {
+        const waveCount = 5;
+        for (let w = 0; w < waveCount; w++) {
+          ctx.beginPath();
+          const amplitude = 30 + Math.sin(time * 0.8 + w) * 10;
+          const frequency = 0.008;
+          const yBase = height * (0.2 + w * 0.15);
+          
+          for (let x = 0; x < width; x += 15) {
+            const y = yBase + Math.sin(x * frequency + time * 3 + w) * amplitude;
+            if (x === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          
+          const gradient = ctx.createLinearGradient(0, yBase - 40, 0, yBase + 40);
+          gradient.addColorStop(0, `rgba(0, 255, 255, ${0.08 + w * 0.02})`);
+          gradient.addColorStop(1, `rgba(255, 0, 255, ${0.04})`);
+          ctx.strokeStyle = gradient;
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
+      }
+      
+      // Draw glowing neural nodes
+      function drawNeuralNodes() {
+        const nodeCount = 35;
+        const nodes = [];
+        
+        for (let i = 0; i < nodeCount; i++) {
+          const x = (Math.sin(time * 0.3 + i) * 0.3 + 0.5) * width * 0.7 + width * 0.15;
+          const y = (Math.cos(time * 0.4 + i * 2) * 0.3 + 0.5) * height * 0.7 + height * 0.15;
+          nodes.push({ x, y });
+          
+          // Draw glow
+          const gradient = ctx.createRadialGradient(x, y, 0, x, y, 8);
+          gradient.addColorStop(0, `rgba(0, 255, 255, 0.6)`);
+          gradient.addColorStop(1, 'rgba(0, 255, 255, 0)');
+          ctx.fillStyle = gradient;
+          ctx.beginPath();
+          ctx.arc(x, y, 8, 0, Math.PI * 2);
+          ctx.fill();
+          
+          ctx.beginPath();
+          ctx.arc(x, y, 2, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, 0.9)`;
+          ctx.fill();
+        }
+        
+        // Draw connections
+        ctx.beginPath();
+        for (let i = 0; i < nodes.length; i++) {
+          for (let j = i + 1; j < nodes.length; j++) {
+            const dist = Math.hypot(nodes[i].x - nodes[j].x, nodes[i].y - nodes[j].y);
+            if (dist < 150) {
+              ctx.beginPath();
+              ctx.moveTo(nodes[i].x, nodes[i].y);
+              ctx.lineTo(nodes[j].x, nodes[j].y);
+              const opacity = 0.08 * (1 - dist / 200);
+              ctx.strokeStyle = `rgba(0, 200, 255, ${opacity})`;
+              ctx.lineWidth = 1;
+              ctx.stroke();
+            }
+          }
+        }
+      }
+      
+      // Draw rotating geometric shapes
+      function drawGeometricShapes() {
+        const centerX = width / 2;
+        const centerY = height / 2;
+        
+        for (let i = 0; i < 3; i++) {
+          const radius = 60 + i * 40 + Math.sin(time * 0.5) * 10;
+          const rotation = time * 0.2 * (i + 1);
+          const sides = 6 - i;
+          
+          ctx.beginPath();
+          for (let j = 0; j <= sides; j++) {
+            const angle = (j / sides) * Math.PI * 2 + rotation;
+            const x = centerX + Math.cos(angle) * radius;
+            const y = centerY + Math.sin(angle) * radius;
+            if (j === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.closePath();
+          ctx.strokeStyle = `rgba(0, 255, 255, ${0.15 - i * 0.03})`;
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
+      }
+      
+      // Draw particle field
+      function drawParticles() {
+        for (let p of particles) {
+          p.x += p.speedX;
+          p.y += p.speedY;
+          p.pulse += 0.05;
+          
+          // wrap around
+          if (p.x < -20) p.x = width + 20;
+          if (p.x > width + 20) p.x = -20;
+          if (p.y < -20) p.y = height + 20;
+          if (p.y > height + 20) p.y = -20;
+          
+          const pulseAlpha = p.alpha + Math.sin(p.pulse) * 0.2;
+          const radius = p.radius + Math.sin(p.pulse * 2) * 0.5;
+          
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          ctx.fill();
+          
+          // inner glow
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, radius * 0.5, 0, Math.PI * 2);
+          ctx.fillStyle = 'white';
+          ctx.fill();
+        }
+      }
+      
+      // Draw data streams
+      function drawDataStreams() {
+        for (let stream of dataStreams) {
+          for (let i = 0; i < stream.chars.length; i++) {
+            const char = stream.chars[i];
+            const yPos = stream.chars[i].y + (time * stream.speed + stream.offset) % 400;
+            if (yPos > 0 && yPos < height) {
+              const alpha = char.alpha * (1 - yPos / height);
+              ctx.font = `${14 + Math.sin(time * 3) * 1}px "Courier New", monospace`;
+              ctx.fillStyle = stream.color;
+              ctx.shadowBlur = 8;
+              ctx.shadowColor = stream.color;
+              ctx.fillText(char.char, stream.x, yPos);
+            }
+          }
+        }
+        ctx.shadowBlur = 0;
+      }
+      
+      // Draw radial gradient background
+      function drawBackgroundGradient() {
+        const grad = ctx.createLinearGradient(0, 0, width, height);
+        grad.addColorStop(0, '#030318');
+        grad.addColorStop(0.4, '#0a0a2a');
+        grad.addColorStop(0.7, '#060620');
+        grad.addColorStop(1, '#010108');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, width, height);
+        
+        // Vignette effect
+        const vignette = ctx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width / 1.5);
+        vignette.addColorStop(0, 'rgba(0, 0, 0, 0)');
+        vignette.addColorStop(1, 'rgba(0, 0, 0, 0.6)');
+        ctx.fillStyle = vignette;
+        ctx.fillRect(0, 0, width, height);
+      }
+      
+      // Draw scanning line effect
+      function drawScanline() {
+        const scanY = (time * 80) % (height + 100) - 50;
+        const gradient = ctx.createLinearGradient(0, scanY, 0, scanY + 50);
+        gradient.addColorStop(0, 'rgba(0, 255, 255, 0)');
+        gradient.addColorStop(0.5, 'rgba(0, 255, 255, 0.15)');
+        gradient.addColorStop(1, 'rgba(0, 255, 255, 0)');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, scanY - 25, width, 50);
+      }
+      
+      // Draw corner brackets (tech UI)
+      function drawCornerBrackets() {
+        const size = 30;
+        const offset = 20;
+        ctx.strokeStyle = 'rgba(0, 255, 255, 0.5)';
+        ctx.lineWidth = 2;
+        
+        // Top-left
+        ctx.beginPath();
+        ctx.moveTo(offset, offset + size);
+        ctx.lineTo(offset, offset);
+        ctx.lineTo(offset + size, offset);
+        ctx.stroke();
+        
+        // Top-right
+        ctx.beginPath();
+        ctx.moveTo(width - offset, offset + size);
+        ctx.lineTo(width - offset, offset);
+        ctx.lineTo(width - offset - size, offset);
+        ctx.stroke();
+        
+        // Bottom-left
+        ctx.beginPath();
+        ctx.moveTo(offset, height - offset - size);
+        ctx.lineTo(offset, height - offset);
+        ctx.lineTo(offset + size, height - offset);
+        ctx.stroke();
+        
+        // Bottom-right
+        ctx.beginPath();
+        ctx.moveTo(width - offset, height - offset - size);
+        ctx.lineTo(width - offset, height - offset);
+        ctx.lineTo(width - offset - size, height - offset);
+        ctx.stroke();
+      }
+      
+      // Draw rotating aurora rings
+      function drawAuroraRings() {
+        const centerX = width / 2;
+        const centerY = height / 2;
+        
+        for (let i = 0; i < 2; i++) {
+          const radius = 180 + i * 60 + Math.sin(time * 0.5) * 20;
+          ctx.beginPath();
+          ctx.ellipse(centerX, centerY, radius, radius * 0.6, time * 0.2 + i, 0, Math.PI * 2);
+          const gradient = ctx.createLinearGradient(centerX - radius, centerY, centerX + radius, centerY);
+          gradient.addColorStop(0, 'rgba(0, 255, 255, 0.05)');
+          gradient.addColorStop(0.5, 'rgba(255, 0, 255, 0.08)');
+          gradient.addColorStop(1, 'rgba(0, 255, 255, 0.05)');
+          ctx.strokeStyle = gradient;
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
+      }
+      
+      // Main animation loop
+      function animate() {
+        time += 0.016; // smooth time increment
+        
+        drawBackgroundGradient();
+        drawHexGrid();
+        drawFlowWaves();
+        drawAuroraRings();
+        drawGeometricShapes();
+        drawNeuralNodes();
+        drawDataStreams();
+        drawParticles();
+        drawScanline();
+        drawCornerBrackets();
+        
+        requestAnimationFrame(animate);
+      }
+      
+      // Initialization
+      resizeCanvas();
+      window.addEventListener('resize', () => {
+        resizeCanvas();
+        initDataStreams(); // reinitialize streams on resize
+      });
+      
+      animate();
+      
+      // Add a subtle mouse interaction effect (particles respond to mouse)
+      let mouseX = 0, mouseY = 0;
+      document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        
+        // Affect a few particles near mouse
+        for (let p of particles) {
+          const dx = p.x - mouseX;
+          const dy = p.y - mouseY;
+          const dist = Math.hypot(dx, dy);
+          if (dist < 100) {
+            p.speedX += (dx > 0 ? 0.02 : -0.02);
+            p.speedY += (dy > 0 ? 0.02 : -0.02);
+            // limit speed
+            p.speedX = Math.min(Math.max(p.speedX, -0.8), 0.8);
+            p.speedY = Math.min(Math.max(p.speedY, -0.6), 0.6);
+          }
+        }
+      });
+      
+      console.log('%c⚡ FUTURISTIC BACKGROUND ACTIVATED | ISAAC-MD HYPERDRIVE ⚡', 'color: cyan; font-size: 14px; font-family: monospace;');
+    })();
+  </script>
+</body>
+</html>

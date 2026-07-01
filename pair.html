@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>ISAAC PAIR | CYBERPUNK SYNAPSE</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(ellipse at 30% 40%, #050914, #000000);
+      font-family: 'Segoe UI', 'Orbitron', 'Poppins', 'Inter', monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      cursor: default;
+    }
+
+    /* ========== ASTONISHING BACKGROUND: Holo Waves + Energy Rings + Floating Nebula ========== */
+    .cosmic-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .nebula-1 {
+      position: absolute;
+      width: 150%;
+      height: 150%;
+      background: radial-gradient(circle at 20% 30%, rgba(0, 255, 255, 0.15), rgba(10, 20, 60, 0.6), rgba(0, 0, 0, 0.9));
+      top: -30%;
+      left: -30%;
+      filter: blur(70px);
+      animation: driftNebula 24s infinite alternate ease-in-out;
+    }
+
+    .nebula-2 {
+      position: absolute;
+      width: 130%;
+      height: 130%;
+      background: radial-gradient(circle at 80% 70%, rgba(255, 0, 200, 0.12), rgba(20, 10, 50, 0.5), transparent);
+      bottom: -40%;
+      right: -30%;
+      filter: blur(90px);
+      animation: driftNebula2 18s infinite alternate-reverse;
+    }
+
+    @keyframes driftNebula {
+      0% { transform: translate(0%, 0%) scale(1); opacity: 0.5; }
+      100% { transform: translate(8%, 5%) scale(1.2); opacity: 0.9; }
+    }
+
+    @keyframes driftNebula2 {
+      0% { transform: translate(0%, 0%) rotate(0deg) scale(1); }
+      100% { transform: translate(-10%, -8%) rotate(5deg) scale(1.3); }
+    }
+
+    .grid-holo {
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      top: -50%;
+      left: -50%;
+      background-image: 
+        repeating-linear-gradient(white 0px 1px, transparent 1px 60px),
+        repeating-linear-gradient(90deg, cyan 0px 1px, transparent 1px 60px);
+      background-size: 70px 70px;
+      opacity: 0.07;
+      animation: gridMove 15s linear infinite;
+      transform-style: preserve-3d;
+      pointer-events: none;
+    }
+
+    @keyframes gridMove {
+      0% { transform: translate3d(0,0,0) rotateX(0deg);}
+      100% { transform: translate3d(70px, 70px, 0) rotateX(2deg);}
+    }
+
+    .energy-particles {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    .particle-orbit {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: #0ff;
+      border-radius: 50%;
+      box-shadow: 0 0 12px cyan, 0 0 25px #0ff;
+      animation: floatGlow 9s infinite alternate;
+    }
+
+    @keyframes floatGlow {
+      0% { transform: translateY(0px) scale(1); opacity: 0.3; }
+      100% { transform: translateY(-80px) scale(1.8); opacity: 1; }
+    }
+
+    .ring-container {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
+
+    .ring {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      border: 2px solid rgba(0, 255, 255, 0.3);
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+      animation: rotateRing 20s linear infinite;
+    }
+
+    .ring1 {
+      width: 600px;
+      height: 600px;
+      border-top-color: cyan;
+      border-right-color: transparent;
+      border-bottom-color: rgba(255, 0, 200, 0.5);
+      border-left-color: transparent;
+    }
+
+    .ring2 {
+      width: 1000px;
+      height: 1000px;
+      border: 1px solid rgba(0, 255, 200, 0.2);
+      border-top: 3px solid #f0f;
+      animation-direction: reverse;
+      animation-duration: 35s;
+    }
+
+    .ring3 {
+      width: 400px;
+      height: 400px;
+      border: 1px dashed cyan;
+      animation-duration: 12s;
+      opacity: 0.5;
+    }
+
+    @keyframes rotateRing {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    /* main container — SQUARE, CENTERED, NOT FULL SCREEN */
+    .container {
+      position: relative;
+      z-index: 20;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100vh;
+      padding: 1.5rem;
+      perspective: 1200px;
+    }
+
+    .quantum-vortex {
+      background: radial-gradient(145% 140% at 10% 20%, rgba(8, 20, 40, 0.55), rgba(0, 0, 0, 0.75));
+      backdrop-filter: blur(18px);
+      border-radius: 3.5rem;
+      border: 1px solid rgba(0, 255, 255, 0.6);
+      box-shadow: 0 30px 50px rgba(0, 0, 0, 0.6), 0 0 0 2px rgba(0, 255, 255, 0.1) inset, 0 0 30px rgba(0, 255, 255, 0.4);
+      width: 500px;
+      max-width: 92vw;
+      /* ---------- SQUARE ASPECT ---------- */
+      aspect-ratio: 1 / 1;
+      padding: 1.8rem 1.8rem;
+      transition: all 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      transform-style: preserve-3d;
+      animation: floatCard 6s infinite ease-in-out;
+      position: relative;
+      overflow-y: auto;  /* content scroll if needed, but we keep compact */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    /* keep square on small screens too */
+    @media (max-width: 550px) {
+      .quantum-vortex {
+        width: 94vw;
+        max-width: 94vw;
+        aspect-ratio: 1 / 1;
+        padding: 1.2rem 1.2rem;
+        border-radius: 2.5rem;
+      }
+    }
+
+    /* Dynamic border neon flow */
+    .quantum-vortex::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(125deg, cyan, magenta, cyan, cyan);
+      border-radius: 3.6rem;
+      z-index: -1;
+      opacity: 0.4;
+      filter: blur(12px);
+      animation: borderPulse 3s infinite;
+    }
+
+    @keyframes borderPulse {
+      0% { opacity: 0.3; filter: blur(8px);}
+      50% { opacity: 0.8; filter: blur(15px);}
+      100% { opacity: 0.3; filter: blur(8px);}
+    }
+
+    @keyframes floatCard {
+      0% { transform: translateY(0px) rotateX(0deg); }
+      50% { transform: translateY(-8px) rotateX(1deg); }
+      100% { transform: translateY(0px) rotateX(0deg); }
+    }
+
+    /* badge tech */
+    .hologram-badge {
+      background: rgba(0, 30, 40, 0.7);
+      backdrop-filter: blur(8px);
+      padding: 0.4rem 1rem;
+      border-radius: 50px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-left: 4px solid cyan;
+      font-family: 'Orbitron', monospace;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: #8effff;
+      margin-bottom: 0.8rem;
+      font-size: 0.75rem;
+      white-space: nowrap;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      background: linear-gradient(125deg, #fff, cyan, #f0f, cyan);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 12px rgba(0, 255, 255, 0.6);
+      letter-spacing: -1px;
+      margin-bottom: 0.2rem;
+      line-height: 1.2;
+    }
+
+    .cyber-sub {
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      margin: 0.2rem 0 0.6rem;
+      border-bottom: 1px dashed rgba(0,255,200,0.4);
+      padding-bottom: 6px;
+    }
+
+    .creator {
+      font-size: 0.65rem;
+      background: #00000070;
+      padding: 0.15rem 0.8rem;
+      border-radius: 30px;
+      font-weight: bold;
+      color: #0ff;
+      backdrop-filter: blur(4px);
+      letter-spacing: 0.5px;
+    }
+
+    .input-neo {
+      margin: 0.6rem 0 0.6rem;
+    }
+
+    .input-group-future {
+      display: flex;
+      background: rgba(0, 5, 15, 0.8);
+      border-radius: 70px;
+      border: 1px solid rgba(0, 255, 255, 0.7);
+      transition: all 0.25s;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 0 6px rgba(0, 255, 255, 0.2);
+    }
+
+    .input-group-future:focus-within {
+      border-color: #0ff;
+      box-shadow: 0 0 22px cyan, inset 0 0 8px rgba(0,255,255,0.3);
+      transform: scale(1.01);
+    }
+
+    .input-group-future input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      padding: 0.7rem 1.2rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #ffffff;
+      font-family: 'Fira Mono', monospace;
+      outline: none;
+      letter-spacing: 0.8px;
+      min-width: 0;
+    }
+
+    .input-group-future input::placeholder {
+      color: #6d9fcc;
+      font-weight: 400;
+      font-style: italic;
+      font-size: 0.75rem;
+    }
+
+    .input-group-future button {
+      background: linear-gradient(145deg, #001e2c, #000b12);
+      border: none;
+      border-left: 2px solid cyan;
+      padding: 0 1.2rem;
+      border-radius: 70px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #0ff;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.65rem;
+      cursor: pointer;
+      transition: 0.25s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .input-group-future button:hover {
+      background: cyan;
+      color: #000;
+      box-shadow: 0 0 24px cyan;
+      border-color: white;
+      text-shadow: none;
+    }
+
+    /* result panel: futuristic glass */
+    .data-core {
+      margin-top: 0.6rem;
+      background: rgba(2, 12, 24, 0.6);
+      backdrop-filter: blur(12px);
+      border-radius: 2rem;
+      padding: 0.1rem;
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      transition: all 0.3s;
+      flex-shrink: 0;
+    }
+
+    .code-vault {
+      background: rgba(0, 0, 0, 0.55);
+      margin: 0.6rem;
+      border-radius: 1.8rem;
+      padding: 0.8rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(0, 255, 200, 0.4);
+    }
+
+    .pair-code-digits {
+      font-family: 'Fira Code', 'Courier New', monospace;
+      font-size: 1.6rem;
+      font-weight: bold;
+      letter-spacing: 4px;
+      background: linear-gradient(135deg, #f0f, cyan, white);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 12px cyan;
+      word-break: break-all;
+    }
+
+    .copy-cyber {
+      background: rgba(0, 255, 255, 0.12);
+      border: 1.5px solid cyan;
+      padding: 0.4rem 1rem;
+      border-radius: 40px;
+      color: cyan;
+      font-weight: bold;
+      font-family: monospace;
+      transition: 0.2s;
+      cursor: pointer;
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      font-size: 0.7rem;
+    }
+
+    .copy-cyber:hover {
+      background: cyan;
+      color: black;
+      box-shadow: 0 0 16px cyan;
+      transform: scale(0.98);
+    }
+
+    .wait-holo {
+      text-align: center;
+      padding: 0.8rem 0.2rem;
+      color: #aaffdd;
+      text-shadow: 0 0 3px cyan;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .error-shock {
+      text-align: center;
+      padding: 0.8rem;
+      color: #ff5e7e;
+      font-weight: bold;
+      background: rgba(255, 0, 50, 0.1);
+      border-radius: 2rem;
+      font-size: 0.85rem;
+    }
+
+    footer {
+      font-size: 0.55rem;
+      text-align: center;
+      margin-top: 0.8rem;
+      color: #5dc9ff;
+      opacity: 0.7;
+      letter-spacing: 0.3px;
+    }
+
+    /* scroll inside square if needed */
+    .quantum-vortex::-webkit-scrollbar {
+      width: 3px;
+    }
+    .quantum-vortex::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .quantum-vortex::-webkit-scrollbar-thumb {
+      background: cyan;
+      border-radius: 10px;
+    }
+
+    @media (max-width: 550px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+      .hologram-badge {
+        font-size: 0.6rem;
+        padding: 0.2rem 0.8rem;
+      }
+      .pair-code-digits {
+        font-size: 1.3rem;
+        letter-spacing: 2px;
+      }
+      .input-group-future input {
+        font-size: 0.75rem;
+        padding: 0.5rem 0.8rem;
+      }
+      .input-group-future button {
+        font-size: 0.55rem;
+        padding: 0 0.8rem;
+      }
+      .cyber-sub .creator {
+        font-size: 0.55rem;
+      }
+      .wait-holo {
+        font-size: 0.75rem;
+      }
+      .code-vault {
+        padding: 0.5rem 0.6rem;
+      }
+    }
+
+    /* scan effect */
+    .scan-effect {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, cyan, magenta, transparent);
+      animation: scanMove 3s infinite;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    @keyframes scanMove {
+      0% { top: 0%; opacity: 0.2;}
+      50% { top: 100%; opacity: 0.9;}
+      100% { top: 0%; opacity: 0.2;}
+    }
+  </style>
+</head>
+<body>
+
+<div class="cosmic-bg">
+  <div class="nebula-1"></div>
+  <div class="nebula-2"></div>
+  <div class="grid-holo"></div>
+  <div class="ring-container">
+    <div class="ring ring1"></div>
+    <div class="ring ring2"></div>
+    <div class="ring ring3"></div>
+  </div>
+  <div class="energy-particles" id="dynamicParticles"></div>
+</div>
+
+<div class="container">
+  <div class="quantum-vortex">
+    <div class="scan-effect"></div>
+    <div class="hologram-badge">
+      <i class="fas fa-microchip fa-fw"></i> 
+      <span>✦ 𝐐𝐔𝐀𝐍𝐓𝐔𝐌 𝐂𝐎𝐑𝐄 v4.0 ✦</span>
+      <i class="fas fa-satellite-dish"></i>
+    </div>
+    <h1>
+      <i class="fas fa-link"></i> ISAAC-𝐌𝐃 <span style="color:#0ff;">𝐍𝐎𝐕𝐀</span>
+    </h1>
+    <div class="cyber-sub">
+      <div class="creator"><i class="fas fa-skull"></i> ISAAC ⚡ 𝐄𝐍𝐂𝐑𝐘𝐏𝐓𝐄𝐃</div>
+      <div class="creator"><i class="fas fa-fingerprint"></i> 𝐏𝐀𝐈𝐑 𝐏𝐑𝐎𝐓𝐎𝐂𝐎𝐋</div>
+    </div>
+    <p style="color: #b3e4ff; font-size: 0.7rem; margin: 4px 0 6px;">
+      <i class="fas fa-globe-americas"></i> enter mobile with country code · end-to-end secure tunnel
+    </p>
+
+    <div class="input-neo">
+      <div class="input-group-future">
+        <input type="tel" id="phoneNumber" placeholder="eg: 2541142835xx" autocomplete="off">
+        <button id="pairTrigger">
+          <i class="fas fa-bolt"></i> 𝐈𝐍𝐈𝐓𝐈𝐀𝐓𝐄
+        </button>
+      </div>
+    </div>
+
+    <div class="data-core" id="responseCore">
+      <div id="displayArea" style="min-height: 80px;">
+        <div class="wait-holo">
+          <i class="fas fa-crown"></i> standby · sync ready
+        </div>
+      </div>
+    </div>
+    <footer>
+      <i class="fas fa-shield-haltered"></i> isaac secure pairing · one-time code matrix
+    </footer>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0-alpha.1/axios.min.js"></script>
+<script>
+  (function() {
+    const phoneInput = document.getElementById('phoneNumber');
+    const pairBtn = document.getElementById('pairTrigger');
+    const displayDiv = document.getElementById('displayArea');
+
+    // particle background
+    function createParticles() {
+      const container = document.getElementById('dynamicParticles');
+      if (!container) return;
+      for (let i = 0; i < 120; i++) {
+        const p = document.createElement('div');
+        p.classList.add('particle-orbit');
+        const size = Math.random() * 4 + 2;
+        p.style.width = `${size}px`;
+        p.style.height = `${size}px`;
+        p.style.left = `${Math.random() * 100}%`;
+        p.style.top = `${Math.random() * 100}%`;
+        p.style.animationDuration = `${Math.random() * 8 + 5}s`;
+        p.style.animationDelay = `${Math.random() * 10}s`;
+        p.style.background = `radial-gradient(circle, cyan, ${Math.random() > 0.7 ? '#f0f' : '#0ff'})`;
+        p.style.boxShadow = `0 0 15px ${Math.random() > 0.8 ? 'magenta' : 'cyan'}`;
+        container.appendChild(p);
+      }
+    }
+    createParticles();
+
+    async function copyCodeToClipboard(codeRaw, btnElement) {
+      try {
+        await navigator.clipboard.writeText(codeRaw);
+        if (btnElement) {
+          const originalHtml = btnElement.innerHTML;
+          btnElement.innerHTML = '<i class="fas fa-check-circle"></i> COPIED!';
+          btnElement.style.background = "cyan";
+          btnElement.style.color = "#000";
+          setTimeout(() => {
+            btnElement.innerHTML = originalHtml;
+            btnElement.style.background = "rgba(0, 255, 255, 0.12)";
+            btnElement.style.color = "cyan";
+          }, 1000);
+        }
+      } catch (err) {
+        console.warn("copy fail");
+      }
+    }
+
+    function setLoading() {
+      displayDiv.innerHTML = `
+        <div style="display: flex; justify-content: center; gap: 12px; align-items: center; padding: 1rem 0;">
+          <i class="fas fa-sync-alt fa-spin fa-2x" style="color:#0ff;"></i>
+          <span style="color:#8effff; font-weight: 500; font-size:0.9rem;">establishing bridge <span id="dotLoad">...</span></span>
+        </div>
+      `;
+      let dotCount = 0;
+      const interval = setInterval(() => {
+        const dotSpan = document.getElementById('dotLoad');
+        if (dotSpan) {
+          dotCount = (dotCount + 1) % 4;
+          dotSpan.innerText = '.'.repeat(dotCount);
+        } else clearInterval(interval);
+      }, 380);
+      window._loadInterval = interval;
+    }
+
+    function clearLoadInterval() {
+      if (window._loadInterval) {
+        clearInterval(window._loadInterval);
+        window._loadInterval = null;
+      }
+    }
+
+    function showErrorMsg(msg) {
+      clearLoadInterval();
+      displayDiv.innerHTML = `
+        <div class="error-shock">
+          <i class="fas fa-radiation"></i> ${msg}
+        </div>
+      `;
+      setTimeout(() => {
+        if (displayDiv.innerHTML.includes(msg)) {
+          displayDiv.innerHTML = `<div class="wait-holo"><i class="fas fa-crown"></i> ready · enter number</div>`;
+        }
+      }, 3000);
+    }
+
+    function showPairCode(code) {
+      clearLoadInterval();
+      if (!code || code === "Service Unavailable") {
+        showErrorMsg("⚠️ PAIR ENGINE OFFLINE · retry later");
+        return;
+      }
+      const container = document.createElement('div');
+      container.className = 'code-vault';
+      
+      const codeSpan = document.createElement('span');
+      codeSpan.className = 'pair-code-digits';
+      codeSpan.innerText = code;
+      
+      const copyBtn = document.createElement('div');
+      copyBtn.className = 'copy-cyber';
+      copyBtn.innerHTML = '<i class="fas fa-copy"></i> DUPLICATE';
+      
+      container.appendChild(codeSpan);
+      container.appendChild(copyBtn);
+      
+      const noteSpan = document.createElement('div');
+      noteSpan.style.fontSize = "0.6rem";
+      noteSpan.style.marginTop = "4px";
+      noteSpan.style.textAlign = "center";
+      noteSpan.style.color = "#6fdcff";
+      noteSpan.innerHTML = '<i class="fas fa-hourglass-half"></i> expires in 180s · one-time use';
+      
+      const finalWrapper = document.createElement('div');
+      finalWrapper.appendChild(container);
+      finalWrapper.appendChild(noteSpan);
+      
+      displayDiv.innerHTML = '';
+      displayDiv.appendChild(finalWrapper);
+      
+      copyBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        copyCodeToClipboard(code, copyBtn);
+      });
+    }
+
+    async function initiatePairing() {
+      let rawNumber = phoneInput.value.trim();
+      if (!rawNumber) {
+        showErrorMsg("📡 enter your whatsapp number with country code");
+        return;
+      }
+      let digits = rawNumber.replace(/[^0-9]/g, "");
+      if (digits.length < 9) {
+        showErrorMsg("⛔ insufficient digits · include full country code");
+        return;
+      }
+      if (digits.length < 11) {
+        showErrorMsg("⚠️ need country code + number (min 11 digits)");
+        return;
+      }
+
+      let formatted = "+" + digits;
+      if (formatted.length > 18) formatted = formatted.slice(0, 18);
+      phoneInput.value = formatted;
+
+      setLoading();
+      try {
+        const apiUrl = `/code?number=${digits}`;
+        const response = await axios.get(apiUrl, { timeout: 15000 });
+        const recvCode = response.data?.code || null;
+        if (recvCode && recvCode !== "Service Unavailable") {
+          showPairCode(recvCode);
+        } else {
+          showErrorMsg("❌ pairing service unavailable | code generation failed");
+        }
+      } catch (err) {
+        console.error("pair error", err);
+        let friendlyErr = "🌐 isaac link failure · check connection or backend service";
+        if (err.response && err.response.status === 404) friendlyErr = "🔌 endpoint /code not found · pair module offline";
+        else if (err.code === "ERR_NETWORK") friendlyErr = "⚠️ network anomaly · verify your connection";
+        showErrorMsg(friendlyErr);
+      }
+    }
+
+    pairBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      initiatePairing();
+    });
+    phoneInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        initiatePairing();
+      }
+    });
+    phoneInput.addEventListener('input', (e) => {
+      let val = e.target.value.replace(/[^0-9+]/g, "");
+      if (val.startsWith('+')) val = '+' + val.slice(1).replace(/[^0-9]/g, '');
+      else val = val.replace(/[^0-9]/g, '');
+      if (val.length > 16) val = val.slice(0, 16);
+      e.target.value = val;
+    });
+
+    displayDiv.innerHTML = `<div class="wait-holo"><i class="fas fa-crown"></i> ready · enter number</div>`;
+  })();
+</script>
+</body>
+</html>
