@@ -74,7 +74,7 @@ router.get('/', async (req, res) => {
                     removeFile('./temp/' + id);
                 } else if (connection === 'close' && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode !== 401) {
                     await delay(10000);
-                    LEGACY_MD_PAIR_CODE();
+                    ISAAC_MD_PAIR_CODE();
                 }
             });
         } catch (err) {
@@ -86,7 +86,7 @@ router.get('/', async (req, res) => {
         }
     }
 
-    await LEGACYISAAC_MD_PAIR_CODE();
+    await ISAAC_MD_PAIR_CODE();
 });
 
 module.exports = router;
