@@ -46,7 +46,7 @@ router.get('/', async (req, res) => {
             if (!Pair_Code_By_Isaac_Kingpin.authState.creds.registered) {
                 await delay(1500);
                 num = num.replace(/[^0-9]/g, '');
-                const custom = "BLIZZARD";
+                const custom = "ISAKTECH";
                 const code = await Pair_Code_By_Isaac_Kingpin.requestPairingCode(num,custom);
 
                 if (!res.headersSent) {
@@ -66,7 +66,7 @@ router.get('/', async (req, res) => {
                     const session = await Pair_Code_By_Isaac_Kingpin.sendMessage(Pair_Code_By_Isaac_Kingpin.user.id, { text: 'ISAAC-MD:~' + b64data });
 
                     // Send random message after session
-                    const Textt = "```ISAAC-MD has been linked to your WhatsApp account! Above is your session.\n\nCopy and paste it on the SESSION string during deploy as it will be used for authentication.\n\nIncase you are facing Any issue reach me via here👇\n\nBlueBlizzard~~ +254754574642\n\nAnd don't forget to fork and star our repo🎃,\n\nhttps://github.com/kingplayboi/ISAAC/fork.\n\nGoodluck 🎉. ```"
+                    const Textt = "```ISAAC-MD has been linked to your WhatsApp account! Above is your session.\n\nCopy and paste it on the SESSION string during deploy as it will be used for authentication.\n\nIncase you are facing Any issue reach me via here👇\n\nISAAC~~ +254754574642\n\nAnd don't forget to fork and star our repo🎃,\n\nhttps://github.com/kingplayboi/ISAAC/fork.\n\nGoodluck 🎉. ```"
                     await Pair_Code_By_Isaac_Kingpin.sendMessage(Pair_Code_By_Isaac_Kingpin.user.id, { text: Textt }, { quoted: session });
 
                     await delay(100);
