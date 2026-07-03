@@ -63,24 +63,24 @@ app.get('/deploy', async (req, res) => {
 
     try {
 
-        // Allow the owner to test without forking
-        if (username === owner) {
-            return res.redirect(
-                `https://vercel.com/new/clone?repository-url=https://github.com/${owner}/${repo}`
-            );
-        }
-
-        const response = await fetch(
-            `https://api.github.com/repos/${username}/${repo}`,
-            {
-                headers: {
-                    'User-Agent': 'ISAAC-MD',
-                    'Accept': 'application/vnd.github+json'
-                }
-            }
+    // Allow the owner to test without forking
+    if (username === owner) {
+        return res.redirect(
+            `https://dashboard.heroku.com/new-app?template=https://github.com/${username}/${repo}`
         );
+    }
 
-        if (response.status === 404) {
+    const response = await fetch(
+        `https://api.github.com/repos/${username}/${repo}`,
+        {
+            headers: {
+                'User-Agent': 'ISAAC-MD',
+                'Accept': 'application/vnd.github+json'
+            }
+        }
+    );
+
+    if (response.status === 404) {
             return res.send(`
                 <h1>❌ Fork Required</h1>
                 <p>You must fork ${owner}/${repo} before deploying.</p>
