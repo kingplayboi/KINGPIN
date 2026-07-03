@@ -32,13 +32,14 @@ passport.use(new GitHubStrategy(
         callbackURL: 'https://kingpin-sjlx.onrender.com/auth/github/callback'
     },
     (accessToken, refreshToken, profile, done) => {
+        profile.accessToken = accessToken;
         return done(null, profile);
     }
 ));
 
 app.get(
     '/login/github',
-    passport.authenticate('github', { scope: ['read:user'] })
+    passport.authenticate('github', { scope: ['read:user', 'public_repo'] })
 );
 
 app.get(
@@ -51,6 +52,9 @@ app.get(
     }
 );
 
+const HEROKU_URL = (username, repo) =>
+    `https://dashboard.heroku.com/new-app?template=https://github.com/${username}/${repo}`;
+
 app.get('/deploy', async (req, res) => {
 
     if (!req.user) {
@@ -58,58 +62,91 @@ app.get('/deploy', async (req, res) => {
     }
 
     const username = req.user.username;
+    const token = req.user.accessToken;
     const owner = process.env.REPO_OWNER;
     const repo = process.env.REPO_NAME;
 
     try {
 
-    // Allow the owner to test without forking
-    if (username === owner) {
-        return res.redirect(
-            `https://dashboard.heroku.com/new-app?template=https://github.com/${username}/${repo}`
-        );
-    }
+        if (username === owner) {
+            return res.redirect(HEROKU_URL(username, repo));
+        }
 
-    const response = await fetch(
-        `https://api.github.com/repos/${username}/${repo}`,
-        {
-            headers: {
-                'User-Agent': 'ISAAC-MD',
-                'Accept': 'application/vnd.github+json'
+        const checkResponse = await fetch(
+            `https://api.github.com/repos/${username}/${repo}`,
+            {
+                headers: {
+                    'User-Agent': 'ISAAC-MD',
+                    'Accept': 'application/vnd.github+json'
+                }
+            }
+        );
+
+        if (checkResponse.status === 200) {
+            const data = await checkResponse.json();
+
+            console.log('User:', username);
+            console.log('Repo:', data.full_name);
+            console.log('Fork:', data.fork);
+
+            if (data.fork && data.parent && data.parent.full_name === `${owner}/${repo}`) {
+                return res.redirect(HEROKU_URL(username, repo));
+            }
+
+            if (!data.fork) {
+                return res.send(`
+                    <h1>❌ Name Conflict</h1>
+                    <p>You already have a repo named "${repo}" that isn't a fork of ${owner}/${repo}.</p>
+                    <p>Please delete or rename it, then <a href="/deploy">try again</a>.</p>
+                `);
             }
         }
-    );
 
-    if (response.status === 404) {
-            return res.send(`
-                <h1>❌ Fork Required</h1>
-                <p>You must fork ${owner}/${repo} before deploying.</p>
-                <a href="https://github.com/${owner}/${repo}/fork">
-                    🍴 Fork ISAAC
-                </a>
-            `);
-        }
-
-        const data = await response.json();
-
-        console.log('User:', username);
-        console.log('Repo:', data.full_name);
-        console.log('Fork:', data.fork);
-console.log(JSON.stringify(data.parent, null, 2));
-
-        if (!data.fork) {
-            return res.send(`
-                <h1>❌ Fork Required</h1>
-                <p>${username}/${repo} exists but is not a fork.</p>
-                <a href="https://github.com/${owner}/${repo}/fork">
-                    🍴 Fork ISAAC
-                </a>
-            `);
-        }
-
-        return res.redirect(
-            `https://vercel.com/new/clone?repository-url=https://github.com/${username}/${repo}`
+        const forkResponse = await fetch(
+            `https://api.github.com/repos/${owner}/${repo}/forks`,
+            {
+                method: 'POST',
+                headers: {
+                    'User-Agent': 'ISAAC-MD',
+                    'Accept': 'application/vnd.github+json',
+                    'Authorization': `token ${token}`
+                }
+            }
         );
+
+        if (forkResponse.status !== 202) {
+            const errBody = await forkResponse.text();
+            console.error('Fork failed:', forkResponse.status, errBody);
+            return res.status(500).send(`
+                <h1>Fork failed</h1>
+                <p>GitHub returned status ${forkResponse.status}. Please try again, or fork manually:</p>
+                <a href="https://github.com/${owner}/${repo}/fork">🍴 Fork ISAAC</a>
+            `);
+        }
+
+        let ready = false;
+        for (let i = 0; i < 8; i++) {
+            await new Promise(r => setTimeout(r, 1500));
+            const poll = await fetch(
+                `https://api.github.com/repos/${username}/${repo}`,
+                {
+                    headers: {
+                        'User-Agent': 'ISAAC-MD',
+                        'Accept': 'application/vnd.github+json'
+                    }
+                }
+            );
+            if (poll.status === 200) {
+                ready = true;
+                break;
+            }
+        }
+
+        if (!ready) {
+            return res.redirect(`https://github.com/${username}/${repo}`);
+        }
+
+        return res.redirect(HEROKU_URL(username, repo));
 
     } catch (err) {
 
