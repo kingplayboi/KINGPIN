@@ -90,11 +90,11 @@ app.get('/deploy', async (req, res) => {
 
         const repos = await response.json();
 
-        const hasFork = repos.some(r =>
-            r.fork &&
-            r.parent &&
-            r.parent.full_name === `${owner}/${repo}`
-        );
+        const hasFork = repos.some(r => {
+    return r.fork === true;
+});
+console.log(`User: ${username}`);
+console.log(`Found fork: ${hasFork}`);
 
         if (!hasFork) {
             return res.send(`
