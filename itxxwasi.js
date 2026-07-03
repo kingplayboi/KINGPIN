@@ -95,6 +95,7 @@ app.get('/deploy', async (req, res) => {
         console.log('User:', username);
         console.log('Repo:', data.full_name);
         console.log('Fork:', data.fork);
+console.log(JSON.stringify(data.parent, null, 2));
 
         if (!data.fork) {
             return res.send(`
