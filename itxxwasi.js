@@ -13,7 +13,6 @@ const code = require('./pair');
 
 require('events').EventEmitter.defaultMaxListeners = 500;
 
-// Session middleware
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
@@ -26,7 +25,6 @@ app.use(passport.session());
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
 
-// GitHub OAuth
 passport.use(new GitHubStrategy(
     {
         clientID: process.env.GITHUB_CLIENT_ID,
@@ -38,13 +36,11 @@ passport.use(new GitHubStrategy(
     }
 ));
 
-// Login route
 app.get(
     '/login/github',
     passport.authenticate('github', { scope: ['read:user'] })
 );
 
-// OAuth callback
 app.get(
     '/auth/github/callback',
     passport.authenticate('github', {
@@ -55,7 +51,6 @@ app.get(
     }
 );
 
-// Deploy route with improved fork verification
 app.get('/deploy', async (req, res) => {
 
     if (!req.user) {
@@ -66,73 +61,48 @@ app.get('/deploy', async (req, res) => {
     const owner = process.env.REPO_OWNER;
     const repo = process.env.REPO_NAME;
 
-    // Allow repo owner to bypass checks
-    if (username === owner) {
-        return res.redirect(
-            `https://vercel.com/new/clone?repository-url=https://github.com/${owner}/${repo}`
-        );
-    }
-
     try {
 
+        // Allow the owner to test without forking
+        if (username === owner) {
+            return res.redirect(
+                `https://vercel.com/new/clone?repository-url=https://github.com/${owner}/${repo}`
+            );
+        }
+
         const response = await fetch(
-            `https://api.github.com/users/${username}/repos?per_page=100`,
+            `https://api.github.com/repos/${username}/${repo}`,
             {
                 headers: {
-                    'User-Agent': 'ISAAC-MD'
+                    'User-Agent': 'ISAAC-MD',
+                    'Accept': 'application/vnd.github+json'
                 }
             }
         );
 
-        if (!response.ok) {
-            throw new Error('Failed to fetch repositories');
+        if (response.status === 404) {
+            return res.send(`
+                <h1>❌ Fork Required</h1>
+                <p>You must fork ${owner}/${repo} before deploying.</p>
+                <a href="https://github.com/${owner}/${repo}/fork">
+                    🍴 Fork ISAAC
+                </a>
+            `);
         }
 
-        const repos = await response.json();
+        const data = await response.json();
 
-        const hasFork = repos.some(r => {
-    return r.fork === true;
-});
-console.log(`User: ${username}`);
-console.log(`Found fork: ${hasFork}`);
+        console.log('User:', username);
+        console.log('Repo:', data.full_name);
+        console.log('Fork:', data.fork);
 
-        if (!hasFork) {
+        if (!data.fork) {
             return res.send(`
-<!DOCTYPE html>
-<html>
-<head>
-<title>Fork Required</title>
-<style>
-body{
-    background:#0d1117;
-    color:white;
-    font-family:Arial,sans-serif;
-    text-align:center;
-    padding-top:100px;
-}
-a{
-    display:inline-block;
-    margin-top:20px;
-    padding:14px 28px;
-    background:#238636;
-    color:white;
-    text-decoration:none;
-    border-radius:8px;
-    font-weight:bold;
-}
-</style>
-</head>
-<body>
-
-<h1>❌ Fork Required</h1>
-<p>You must fork <b>${owner}/${repo}</b> before deploying.</p>
-
-<a href="https://github.com/${owner}/${repo}/fork">
-🍴 Fork ISAAC
-</a>
-
-</body>
-</html>
+                <h1>❌ Fork Required</h1>
+                <p>${username}/${repo} exists but is not a fork.</p>
+                <a href="https://github.com/${owner}/${repo}/fork">
+                    🍴 Fork ISAAC
+                </a>
             `);
         }
 
@@ -145,13 +115,12 @@ a{
         console.error(err);
 
         return res.status(500).send(`
-<h1>Internal Server Error</h1>
-<p>Unable to verify repository fork.</p>
+            <h1>Internal Server Error</h1>
+            <p>${err.message}</p>
         `);
     }
 });
 
-// Existing routes
 app.use('/wasiqr', server);
 app.use('/code', code);
 
