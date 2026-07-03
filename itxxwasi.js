@@ -37,71 +37,43 @@ passport.use(new GitHubStrategy(
     }
 ));
 
+// Light login — no repo-write scope, so no sudo/extra-permissions screen
 app.get(
     '/login/github',
-    passport.authenticate('github', { scope: ['read:user', 'public_repo'] })
+    passport.authenticate('github', { scope: ['read:user'] })
 );
+
+// Elevated login — only hit when we actually need to fork on the user's behalf
+app.get('/authorize-fork', (req, res, next) => {
+    req.session.wantsFork = true;
+    next();
+}, passport.authenticate('github', { scope: ['read:user', 'public_repo'] }));
 
 app.get(
     '/auth/github/callback',
     passport.authenticate('github', {
         failureRedirect: '/'
     }),
-    (req, res) => {
-        res.redirect('/deploy');
+    async (req, res) => {
+        if (req.session.wantsFork) {
+            req.session.wantsFork = false;
+            return doFork(req, res);
+        }
+        return res.redirect('/deploy');
     }
 );
 
 const HEROKU_URL = (username, repo) =>
     `https://dashboard.heroku.com/new-app?template=https://github.com/${username}/${repo}`;
 
-app.get('/deploy', async (req, res) => {
-
-    if (!req.user) {
-        return res.redirect('/login/github');
-    }
-
+// Performs the actual fork + polls until ready, then redirects to Heroku
+async function doFork(req, res) {
     const username = req.user.username;
     const token = req.user.accessToken;
     const owner = process.env.REPO_OWNER;
     const repo = process.env.REPO_NAME;
 
     try {
-
-        if (username === owner) {
-            return res.redirect(HEROKU_URL(username, repo));
-        }
-
-        const checkResponse = await fetch(
-            `https://api.github.com/repos/${username}/${repo}`,
-            {
-                headers: {
-                    'User-Agent': 'ISAAC-MD',
-                    'Accept': 'application/vnd.github+json'
-                }
-            }
-        );
-
-        if (checkResponse.status === 200) {
-            const data = await checkResponse.json();
-
-            console.log('User:', username);
-            console.log('Repo:', data.full_name);
-            console.log('Fork:', data.fork);
-
-            if (data.fork && data.parent && data.parent.full_name === `${owner}/${repo}`) {
-                return res.redirect(HEROKU_URL(username, repo));
-            }
-
-            if (!data.fork) {
-                return res.send(`
-                    <h1>❌ Name Conflict</h1>
-                    <p>You already have a repo named "${repo}" that isn't a fork of ${owner}/${repo}.</p>
-                    <p>Please delete or rename it, then <a href="/deploy">try again</a>.</p>
-                `);
-            }
-        }
-
         const forkResponse = await fetch(
             `https://api.github.com/repos/${owner}/${repo}/forks`,
             {
@@ -147,6 +119,67 @@ app.get('/deploy', async (req, res) => {
         }
 
         return res.redirect(HEROKU_URL(username, repo));
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).send(`
+            <h1>Internal Server Error</h1>
+            <p>${err.message}</p>
+        `);
+    }
+}
+
+app.get('/deploy', async (req, res) => {
+
+    if (!req.user) {
+        return res.redirect('/login/github');
+    }
+
+    const username = req.user.username;
+    const owner = process.env.REPO_OWNER;
+    const repo = process.env.REPO_NAME;
+
+    try {
+
+        // Owner can test without forking
+        if (username === owner) {
+            return res.redirect(HEROKU_URL(username, repo));
+        }
+
+        // Unauthenticated public read — no elevated scope needed for this check
+        const checkResponse = await fetch(
+            `https://api.github.com/repos/${username}/${repo}`,
+            {
+                headers: {
+                    'User-Agent': 'ISAAC-MD',
+                    'Accept': 'application/vnd.github+json'
+                }
+            }
+        );
+
+        if (checkResponse.status === 200) {
+            const data = await checkResponse.json();
+
+            console.log('User:', username);
+            console.log('Repo:', data.full_name);
+            console.log('Fork:', data.fork);
+
+            if (data.fork && data.parent && data.parent.full_name === `${owner}/${repo}`) {
+                // Already forked correctly — straight to Heroku, no extra prompts
+                return res.redirect(HEROKU_URL(username, repo));
+            }
+
+            if (!data.fork) {
+                return res.send(`
+                    <h1>❌ Name Conflict</h1>
+                    <p>You already have a repo named "${repo}" that isn't a fork of ${owner}/${repo}.</p>
+                    <p>Please delete or rename it, then <a href="/deploy">try again</a>.</p>
+                `);
+            }
+        }
+
+        // Not forked (404) — request elevated permission to auto-fork on their behalf
+        return res.redirect('/authorize-fork');
 
     } catch (err) {
 
