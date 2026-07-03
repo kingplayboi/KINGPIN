@@ -129,6 +129,92 @@ async function doFork(req, res) {
     }
 }
 
+// Simple no-login verification page: user types their GitHub username or fork URL
+app.get('/verify', (req, res) => {
+    res.send(`
+        <html>
+        <head>
+            <title>Verify Your Fork</title>
+            <style>
+                body { font-family: sans-serif; max-width: 480px; margin: 60px auto; padding: 0 20px; }
+                input { width: 100%; padding: 10px; font-size: 16px; margin: 10px 0; box-sizing: border-box; }
+                button { width: 100%; padding: 12px; font-size: 16px; background: #6e5494; color: white; border: none; border-radius: 6px; cursor: pointer; }
+                button:hover { background: #563d7c; }
+            </style>
+        </head>
+        <body>
+            <h2>🔍 Verify Your Fork</h2>
+            <p>Enter your GitHub username or paste your fork link to continue to deployment.</p>
+            <form action="/verify-check" method="get">
+                <input type="text" name="input" placeholder="e.g. yourname or https://github.com/yourname/${process.env.REPO_NAME}" required />
+                <button type="submit">Verify & Continue</button>
+            </form>
+        </body>
+        </html>
+    `);
+});
+
+app.get('/verify-check', async (req, res) => {
+    const raw = (req.query.input || '').trim();
+
+    if (!raw) {
+        return res.redirect('/verify');
+    }
+
+    const owner = process.env.REPO_OWNER;
+    const repo = process.env.REPO_NAME;
+
+    // Accept either a plain username or a full fork URL like
+    // https://github.com/username/repo
+    let username = raw;
+    const urlMatch = raw.match(/github\.com\/([^\/]+)\/([^\/\s]+)/i);
+    if (urlMatch) {
+        username = urlMatch[1];
+    }
+    username = username.replace(/^@/, '').trim();
+
+    try {
+        const checkResponse = await fetch(
+            `https://api.github.com/repos/${username}/${repo}`,
+            {
+                headers: {
+                    'User-Agent': 'ISAAC-MD',
+                    'Accept': 'application/vnd.github+json'
+                }
+            }
+        );
+
+        if (checkResponse.status !== 200) {
+            return res.send(`
+                <h1>❌ Not Found</h1>
+                <p>Couldn't find a repo named "${repo}" on ${username}'s account.</p>
+                <p><a href="https://github.com/${owner}/${repo}/fork">🍴 Fork ${repo}</a> first, then come back and try again.</p>
+                <p><a href="/verify">← Try again</a></p>
+            `);
+        }
+
+        const data = await checkResponse.json();
+
+        if (data.fork && data.parent && data.parent.full_name === `${owner}/${repo}`) {
+            return res.redirect(HEROKU_URL(username, repo));
+        }
+
+        return res.send(`
+            <h1>❌ Not a Valid Fork</h1>
+            <p>${username}/${repo} exists but isn't a fork of ${owner}/${repo}.</p>
+            <p><a href="https://github.com/${owner}/${repo}/fork">🍴 Fork ${repo}</a> first, then come back and try again.</p>
+            <p><a href="/verify">← Try again</a></p>
+        `);
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).send(`
+            <h1>Internal Server Error</h1>
+            <p>${err.message}</p>
+        `);
+    }
+});
+
 app.get('/deploy', async (req, res) => {
 
     if (!req.user) {
