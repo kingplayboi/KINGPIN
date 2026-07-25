@@ -13,6 +13,8 @@ const code = require('./pair');
 
 require('events').EventEmitter.defaultMaxListeners = 500;
 
+app.get('/ping', (req, res) => res.status(200).json({ status: 'alive', time: new Date().toISOString() }));
+
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
@@ -298,6 +300,16 @@ Don't Forget To Give Star
 
 Server running on http://localhost:${PORT}
 `);
+
+    const appUrl = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
+    setInterval(async () => {
+        try {
+            await fetch(`${appUrl}/ping`);
+            console.log(`🏓 Keep-alive ping sent → ${appUrl}/ping`);
+        } catch (err) {
+            console.warn(`⚠️ Keep-alive ping failed: ${err.message}`);
+        }
+    }, 10 * 60 * 1000);
 });
 
 module.exports = app;
