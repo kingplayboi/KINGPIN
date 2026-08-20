@@ -1,104 +1,107 @@
-const PastebinAPI = require('pastebin-js'),
-pastebin = new PastebinAPI('EMWTMkQAVfJa9kM-MRUrxd5Oku1U7pgL')
-const {makeid} = require('./id');
+const PastebinAPI = require('pastebin-js');
+const pastebin = new PastebinAPI('EMWTMkQAVfJa9kM-MRUrxd5Oku1U7pgL');
+const { makeid } = require('./id');
 const QRCode = require('qrcode');
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-let router = express.Router()
-const pino = require("pino");
+const pino = require('pino');
 const {
-	default: Wasi_Tech,
-	useMultiFileAuthState,
-	jidNormalizedUser,
-	Browsers,
-	delay,
-	makeInMemoryStore,
-} = require("@whiskeysockets/baileys");
+    default: Isak_Kingpin,
+    useMultiFileAuthState,
+    fetchLatestBaileysVersion,
+    delay,
+    Browsers,
+    makeCacheableSignalKeyStore,
+} = require('@whiskeysockets/baileys');
 
-function removeFile(FilePath) {
-	if (!fs.existsSync(FilePath)) return false;
-	fs.rmSync(FilePath, {
-		recursive: true,
-		force: true
-	})
-};
-const {
-	readFile
-} = require("node:fs/promises")
+const router = express.Router();
+
+// Helper function to remove files
+function removeFile(filePath) {
+    if (!fs.existsSync(filePath)) return false;
+    fs.rmSync(filePath, { recursive: true, force: true });
+}
+
+// Route handler
 router.get('/', async (req, res) => {
-	const id = makeid();
-	async function ISAAC_MD_QR_CODE() {
-		const {
-			state,
-			saveCreds
-		} = await useMultiFileAuthState('./temp/' + id)
-		try {
-			let Qr_Code_By_Isaac_Tech = Wasi_Tech({
-				auth: state,
-				printQRInTerminal: false,
-				logger: pino({
-					level: "silent"
-				}),
-				browser: Browsers.macOS("Desktop"),
-			});
+    const id = makeid();
 
-			Qr_Code_By_Isaac_Tech.ev.on('creds.update', saveCreds)
-			Qr_Code_By_Isaac_Tech.ev.on("connection.update", async (s) => {
-				const {
-					connection,
-					lastDisconnect,
-					qr
-				} = s;
-				if (qr) await res.end(await QRCode.toBuffer(qr));
-				if (connection == "open") {
-					await Qr_Code_By_Isaac_Tech.sendMessage(Qr_Code_By_Isaac_Tech.user.id, { text: 'A moment wait for your session'});
-					await delay(12000);
-					let data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
-					await delay(800);
-				   let b64data = Buffer.from(data).toString('base64');
-				   let session = await Qr_Code_By_Isaac_Tech.sendMessage(Qr_Code_By_Wasi_Tech.user.id, { text: 'ISAAC-MD:~' + b64data });
-	
-				   let ISAAC_MD_TEXT = `
+    async function ISAAC_MD_QR_CODE() {
+        const { version } = await fetchLatestBaileysVersion();
+        console.log(version);
+        const { state, saveCreds } = await useMultiFileAuthState('./temp/' + id);
+
+        try {
+            const Qr_Code_By_Isak_Kingpin = Isak_Kingpin({
+                auth: {
+                    creds: state.creds,
+                    keys: makeCacheableSignalKeyStore(state.keys, pino({ level: 'fatal' }).child({ level: 'fatal' })),
+                },
+                version,
+                printQRInTerminal: false,
+                logger: pino({
+                    level: 'silent',
+                }),
+                browser: Browsers.windows('Edge'),
+            });
+
+            Qr_Code_By_Isak_Kingpin.ev.on('creds.update', saveCreds);
+            Qr_Code_By_Isak_Kingpin.ev.on('connection.update', async (s) => {
+                const { connection, lastDisconnect, qr } = s;
+
+                if (qr && !res.headersSent) {
+                    await res.end(await QRCode.toBuffer(qr));
+                }
+
+                if (connection === 'open') {
+                    await Qr_Code_By_Isak_Kingpin.sendMessage(Qr_Code_By_Isak_Kingpin.user.id, { text: '𝐀 𝐦𝐨𝐦𝐞𝐧𝐭 𝐰𝐚𝐢𝐭 𝐟𝐨𝐫 𝐲𝐨𝐮𝐫 𝐬𝐞𝐬𝐬𝐢𝐨𝐧...' });
+                    await delay(50000);
+                    const data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
+                    await delay(8000);
+                    const b64data = Buffer.from(data).toString('base64');
+                    const session = await Qr_Code_By_Isak_Kingpin.sendMessage(Qr_Code_By_Isak_Kingpin.user.id, { text: 'ISAAC-MD:~' + b64data });
+
+                    const ISAAC_MD_TEXT = `
 ┏━━━━━━━━━━━━━━
-┃ISAAC-MD SESSION IS 
+┃ISAAC-MD SESSION IS
 ┃SUCCESSFULLY
 ┃CONNECTED ✅
 ┗━━━━━━━━━━━━━━━
 ▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 ❶ || Creator = 𖥘OFFICIAL-ISAAC𖥘
 ▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-❷ || WhatsApp Group = https://chat.whatsapp.com/HkEAmSSDPG84r3LyrzpeWy?s=cl&p=a&mlu=3
+❷ || WhatsApp Group = https://chat.whatsapp.com/JPH5gho7uxfBMviXg7sNNs
 ▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-Please Join My WhatsApp Group 
-FOR FAST REPLY +254754574642 
+Please Join My WhatsApp Group
+FOR FAST REPLY +254754574642
 ▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 ©*OFFICIAL-ISAAC*
 _____________________________________
-	
-_Don't Forget To Give Star To My Repo_`
-	 await Qr_Code_By_Wasi_Tech.sendMessage(Qr_Code_By_Wasi_Tech.user.id,{text:ISAAC_MD_TEXT},{quoted:session})
 
+_Don't Forget To Give Star To My Repo_`;
 
+                    await Qr_Code_By_Isak_Kingpin.sendMessage(Qr_Code_By_Isak_Kingpin.user.id, { text: ISAAC_MD_TEXT }, { quoted: session });
 
-					await delay(100);
-					await Qr_Code_By_Isaac_Tech.ws.close();
-					return await removeFile("temp/" + id);
-				} else if (connection === "close" && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode != 401) {
-					await delay(10000);
-					WASI_MD_QR_CODE();
-				}
-			});
-		} catch (err) {
-			if (!res.headersSent) {
-				await res.json({
-					code: "Service is Currently Unavailable"
-				});
-			}
-			console.log(err);
-			await removeFile("temp/" + id);
-		}
-	}
-	return await ISAAC_MD_QR_CODE()
+                    await delay(100);
+                    await Qr_Code_By_Isak_Kingpin.ws.close();
+                    removeFile('./temp/' + id);
+                } else if (connection === 'close' && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output?.statusCode !== 401) {
+                    await delay(10000);
+                    ISAAC_MD_QR_CODE();
+                }
+            });
+        } catch (err) {
+            console.log('service restarted', err);
+            removeFile('./temp/' + id);
+            if (!res.headersSent) {
+                await res.send({ code: 'Service Currently Unavailable' });
+            }
+        }
+    }
+
+    await ISAAC_MD_QR_CODE();
 });
-module.exports = router
+
+module.exports = router;
+
