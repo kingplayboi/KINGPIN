@@ -73,7 +73,7 @@
       height: 200%;
       top: -50%;
       left: -50%;
-      background-image:
+      background-image: 
         repeating-linear-gradient(white 0px 1px, transparent 1px 60px),
         repeating-linear-gradient(90deg, cyan 0px 1px, transparent 1px 60px);
       background-size: 70px 70px;
@@ -528,7 +528,7 @@
   <div class="quantum-vortex">
     <div class="scan-effect"></div>
     <div class="hologram-badge">
-      <i class="fas fa-microchip fa-fw"></i>
+      <i class="fas fa-microchip fa-fw"></i> 
       <span>✦ 𝐐𝐔𝐀𝐍𝐓𝐔𝐌 𝐂𝐎𝐑𝐄 v4.0 ✦</span>
       <i class="fas fa-satellite-dish"></i>
     </div>
@@ -571,7 +571,6 @@
     const phoneInput = document.getElementById('phoneNumber');
     const pairBtn = document.getElementById('pairTrigger');
     const displayDiv = document.getElementById('displayArea');
-    let countdownTimer = null;
 
     // particle background
     function createParticles() {
@@ -614,7 +613,6 @@
     }
 
     function setLoading() {
-      if (countdownTimer) clearInterval(countdownTimer);
       displayDiv.innerHTML = `
         <div style="display: flex; justify-content: center; gap: 12px; align-items: center; padding: 1rem 0;">
           <i class="fas fa-sync-alt fa-spin fa-2x" style="color:#0ff;"></i>
@@ -641,7 +639,6 @@
 
     function showErrorMsg(msg) {
       clearLoadInterval();
-      if (countdownTimer) clearInterval(countdownTimer);
       displayDiv.innerHTML = `
         <div class="error-shock">
           <i class="fas fa-radiation"></i> ${msg}
@@ -654,21 +651,6 @@
       }, 3000);
     }
 
-    function startTimer(duration, timerDisplay) {
-      let timer = duration;
-      if (countdownTimer) clearInterval(countdownTimer);
-
-      countdownTimer = setInterval(() => {
-        if (timer <= 0) {
-          clearInterval(countdownTimer);
-          timerDisplay.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#ff5e7e;"></i> code expired · generate new code';
-          return;
-        }
-        timer--;
-        timerDisplay.innerHTML = `<i class="fas fa-hourglass-half"></i> expires in ${timer}s · one-time use`;
-      }, 1000);
-    }
-
     function showPairCode(code) {
       clearLoadInterval();
       if (!code || code === "Service Unavailable") {
@@ -677,30 +659,97 @@
       }
       const container = document.createElement('div');
       container.className = 'code-vault';
-
+      
       const codeSpan = document.createElement('span');
       codeSpan.className = 'pair-code-digits';
       codeSpan.innerText = code;
-
+      
       const copyBtn = document.createElement('div');
       copyBtn.className = 'copy-cyber';
       copyBtn.innerHTML = '<i class="fas fa-copy"></i> DUPLICATE';
-
+      
       container.appendChild(codeSpan);
       container.appendChild(copyBtn);
-
+      
       const noteSpan = document.createElement('div');
       noteSpan.style.fontSize = "0.6rem";
       noteSpan.style.marginTop = "4px";
       noteSpan.style.textAlign = "center";
       noteSpan.style.color = "#6fdcff";
-      noteSpan.innerHTML = '<i class="fas fa-hourglass-half"></i> expires in 60s · one-time use';
-
+      noteSpan.innerHTML = '<i class="fas fa-hourglass-half"></i> expires in 180s · one-time use';
+      
       const finalWrapper = document.createElement('div');
       finalWrapper.appendChild(container);
       finalWrapper.appendChild(noteSpan);
-
+      
       displayDiv.innerHTML = '';
       displayDiv.appendChild(finalWrapper);
+      
+      copyBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        copyCodeToClipboard(code, copyBtn);
+      });
+    }
 
-      startTimer(60, noteSpa
+    async function initiatePairing() {
+      let rawNumber = phoneInput.value.trim();
+      if (!rawNumber) {
+        showErrorMsg("📡 enter your whatsapp number with country code");
+        return;
+      }
+      let digits = rawNumber.replace(/[^0-9]/g, "");
+      if (digits.length < 9) {
+        showErrorMsg("⛔ insufficient digits · include full country code");
+        return;
+      }
+      if (digits.length < 11) {
+        showErrorMsg("⚠️ need country code + number (min 11 digits)");
+        return;
+      }
+
+      let formatted = "+" + digits;
+      if (formatted.length > 18) formatted = formatted.slice(0, 18);
+      phoneInput.value = formatted;
+
+      setLoading();
+      try {
+        const apiUrl = `/code?number=${digits}`;
+        const response = await axios.get(apiUrl, { timeout: 15000 });
+        const recvCode = response.data?.code || null;
+        if (recvCode && recvCode !== "Service Unavailable") {
+          showPairCode(recvCode);
+        } else {
+          showErrorMsg("❌ pairing service unavailable | code generation failed");
+        }
+      } catch (err) {
+        console.error("pair error", err);
+        let friendlyErr = "🌐 isaac link failure · check connection or backend service";
+        if (err.response && err.response.status === 404) friendlyErr = "🔌 endpoint /code not found · pair module offline";
+        else if (err.code === "ERR_NETWORK") friendlyErr = "⚠️ network anomaly · verify your connection";
+        showErrorMsg(friendlyErr);
+      }
+    }
+
+    pairBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      initiatePairing();
+    });
+    phoneInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        initiatePairing();
+      }
+    });
+    phoneInput.addEventListener('input', (e) => {
+      let val = e.target.value.replace(/[^0-9+]/g, "");
+      if (val.startsWith('+')) val = '+' + val.slice(1).replace(/[^0-9]/g, '');
+      else val = val.replace(/[^0-9]/g, '');
+      if (val.length > 16) val = val.slice(0, 16);
+      e.target.value = val;
+    });
+
+    displayDiv.innerHTML = `<div class="wait-holo"><i class="fas fa-crown"></i> ready · enter number</div>`;
+  })();
+</script>
+</body>
+</html>
