@@ -51,7 +51,111 @@ router.get('/', async (req, res) => {
                 const { connection, lastDisconnect, qr } = s;
 
                 if (qr && !res.headersSent) {
-                    await res.end(await QRCode.toBuffer(qr));
+                    const qrBuffer = await QRCode.toBuffer(qr);
+                    const qrBase64 = qrBuffer.toString('base64');
+
+                    const htmlContent = `
+                    <!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>ISAAC-MD | Scan QR</title>
+                        <style>
+                            * {
+                                box-sizing: border-box;
+                                margin: 0;
+                                padding: 0;
+                                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                            }
+                            body {
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                min-height: 100vh;
+                                background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+                                background-size: cover;
+                                background-position: center;
+                                color: #fff;
+                                text-align: center;
+                                padding: 20px;
+                            }
+                            .container {
+                                background: rgba(0, 0, 0, 0.65);
+                                backdrop-filter: blur(10px);
+                                padding: 30px 20px;
+                                border-radius: 20px;
+                                box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+                                border: 1px solid rgba(255, 255, 255, 0.18);
+                                max-width: 400px;
+                                width: 100%;
+                            }
+                            h1 {
+                                font-size: 24px;
+                                margin-bottom: 10px;
+                                color: #00ffcc;
+                                text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+                            }
+                            p {
+                                font-size: 15px;
+                                margin-bottom: 15px;
+                                color: #e0e0e0;
+                            }
+                            .qr-box {
+                                background: #fff;
+                                padding: 15px;
+                                border-radius: 15px;
+                                display: inline-block;
+                                margin: 15px 0;
+                                box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+                            }
+                            .qr-box img {
+                                display: block;
+                                width: 230px;
+                                height: 230px;
+                            }
+                            .timer-box {
+                                font-size: 16px;
+                                font-weight: bold;
+                                color: #ff4757;
+                                background: rgba(255, 71, 87, 0.15);
+                                padding: 10px;
+                                border-radius: 10px;
+                                border: 1px solid rgba(255, 71, 87, 0.3);
+                                margin-top: 10px;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="container">
+                            <h1>ISAAC-MD SCANNER</h1>
+                            <p>Scan this QR code using WhatsApp to connect your session.</p>
+                            
+                            <div class="qr-box">
+                                <img src="data:image/png;base64,${qrBase64}" alt="WhatsApp QR Code">
+                            </div>
+
+                            <div class="timer-box">
+                                QR code expires in <span id="timer">60</span>s
+                            </div>
+                        </div>
+
+                        <script>
+                            let timeLeft = 60;
+                            const timerDisplay = document.getElementById('timer');
+                            const countdown = setInterval(() => {
+                                timeLeft--;
+                                timerDisplay.textContent = timeLeft;
+                                if (timeLeft <= 0) {
+                                    clearInterval(countdown);
+                                    window.location.reload();
+                                }
+                            }, 1000);
+                        </script>
+                    </body>
+                    </html>`;
+
+                    await res.send(htmlContent);
                 }
 
                 if (connection === 'open') {
