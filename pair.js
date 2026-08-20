@@ -42,12 +42,12 @@ router.get('/', async (req, res) => {
                     level: 'silent',
                 }),
                 browser: Browsers.windows('Edge'),
-            })
+            });
+
             if (!Pair_Code_By_Isak_Kingpin.authState.creds.registered) {
                 await delay(1500);
                 num = num.replace(/[^0-9]/g, '');
-                const custom = "BLIZZARD";
-                const code = await Pair_Code_By_Isak_Kingpin.requestPairingCode(num, custom);
+                const code = await Pair_Code_By_Isak_Kingpin.requestPairingCode(num);
 
                 if (!res.headersSent) {
                     await res.send({ code });
@@ -66,13 +66,13 @@ router.get('/', async (req, res) => {
                     const session = await Pair_Code_By_Isak_Kingpin.sendMessage(Pair_Code_By_Isak_Kingpin.user.id, { text: 'ISAAC-MD:~' + b64data });
 
                     // Send random message after session
-                    const Textt = "```ISAAC-MD has been linked to your WhatsApp account! Above is your session.\n\nCopy and paste it on the SESSION string during deploy as it will be used for authentication.\n\nIncase you are facing Any issue reach me via here👇\n\nISAAC~~ +254754574642\n\nAnd don't forget to fork and star our repo🎃,\n\nhttps://github.com/kingplayboi/ISAAC/fork.\n\nGoodluck 🎉. ```"
+                    const Textt = "```ISAAC-MD has been linked to your WhatsApp account! Above is your session.\n\nCopy and paste it on the SESSION string during deploy as it will be used for authentication.\n\nIncase you are facing Any issue reach me via here👇\n\nISAAC~~ +254754574642\n\nAnd don't forget to fork and star our repo🎃,\n\n[https://github.com/kingplayboi/ISAAC/fork](https://github.com/kingplayboi/ISAAC/fork).\n\nGoodluck 🎉. ```";
                     await Pair_Code_By_Isak_Kingpin.sendMessage(Pair_Code_By_Isak_Kingpin.user.id, { text: Textt }, { quoted: session });
 
                     await delay(100);
                     await Pair_Code_By_Isak_Kingpin.ws.close();
                     removeFile('./temp/' + id);
-                } else if (connection === 'close' && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode !== 401) {
+                } else if (connection === 'close' && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output?.statusCode !== 401) {
                     await delay(10000);
                     ISAAC_MD_PAIR_CODE();
                 }
@@ -90,3 +90,4 @@ router.get('/', async (req, res) => {
 });
 
 module.exports = router;
+
